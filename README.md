@@ -9,11 +9,15 @@ El analizador reconoce las siguientes categorías léxicas:
 - **KEYWORD**: Palabras reservadas de Python (if, else, for, while, etc.)
 - **IDENTIFIER**: Identificadores (nombres de variables, funciones, etc.)
 - **NUMBER**: Números (enteros, flotantes, hexadecimales, etc.)
-- **STRING**: Cadenas de texto (simples, dobles, triples)
+- **STRING**: Cadenas de texto (simples, dobles)
+- **STRING_TRIPLE**: Cadenas de texto triples (""" o ''')
+- **STRING_F**: Cadenas f-string
 - **COMMENT**: Comentarios
 - **OPERATOR**: Operadores (+, -, *, /, etc.)
 - **DELIMITER**: Delimitadores (paréntesis, corchetes, etc.)
 - **DECORATOR**: Decoradores (@property, @staticmethod, etc.)
+- **WHITESPACE**: Espacios en blanco
+- **NEWLINE**: Saltos de línea
 
 ## Expresiones Regulares
 
@@ -23,26 +27,38 @@ Cada categoría léxica se define mediante expresiones regulares:
 ;; Palabras reservadas
 "^\\b(and|as|assert|async|await|break|class|continue|def|del|elif|else|except|False|finally|for|from|global|if|import|in|is|lambda|None|nonlocal|not|or|pass|raise|return|True|try|while|with|yield)\\b"
 
-;; Cadenas
-"^(\"\"\"[\\s\\S]*?\"\"\"|'''[\\s\\S]*?'''|\"[^\"\\n]*\"|'[^'\\n]*')"
+;; Cadenas triples
+"^(\"\"\"[\\s\\S]*?\"\"\"|'''[\\s\\S]*?''')"
 
 ;; Comentarios
 "^#.*"
 
-;; Decoradores
-"^@[a-zA-Z_][a-zA-Z0-9_]*"
+;; F-strings
+"^[fF](\"[^\"\\n]*\"|'[^'\\n]*')"
+
+;; Cadenas simples y dobles
+"^(\"[^\"\\n]*\"|'[^'\\n]*')"
 
 ;; Números
 "^\\b(0[xX][0-9a-fA-F]+|0[bB][01]+|0[oO][0-7]+|\\d+\\.\\d*|\\.\\d+|\\d+)([eE][+-]?\\d+)?\\b"
 
+;; Decoradores
+"^@[a-zA-Z_][a-zA-Z0-9_]*"
+
 ;; Operadores
-"^(\\+\\+|\\-\\-|\\*\\*|//|==|!=|<=|>=|<>|<<|>>|\\+=|\\-=|\\*=|/=|%=|\\*\\*=|//=|&=|\\|=|\\^=|>>=|<<=|\\+|\\-|\\*|/|%|\\^|&|\\||~|<|>|=)"
+"^(\\*\\*=|//=|\\+=|-=|\\*=|/=|%=|&=|\\|=|\\^=|>>=|<<=|\\*\\*|//|==|!=|<=|>=|<>|<<|>>|\\+|-|\\*|/|%|\\^|&|\\||~|<|>|=)"
 
 ;; Delimitadores
 "^[()\\[\\]{},.:;@]"
 
 ;; Identificadores
-"^\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+"^[a-zA-Z_][a-zA-Z0-9_]*"
+
+;; Espacios en blanco
+"^[ \t]+"
+
+;; Saltos de línea
+"^\n"
 ```
 
 ## Requisitos
@@ -52,7 +68,7 @@ Cada categoría léxica se define mediante expresiones regulares:
 
 ## Instalación
 
-1. Instala Racket desde [racket-lang.org](https://racket-lang.org/download/) (ver instrucciones detalladas en INSTALACION.md)
+1. Instala Racket desde [racket-lang.org](https://racket-lang.org/download/)
 2. Asegúrate de tener Python 3.6 o superior instalado
 3. Clona o descarga este repositorio
 
@@ -65,7 +81,7 @@ python resaltar_codigo.py [archivo_python] [archivo_html_salida]
 ```
 
 Donde:
-- `archivo_python` es el archivo de código Python que deseas analizar (por defecto: `prueba.py`)
+- `archivo_python` es el archivo de código Python que deseas analizar (por defecto: `ejemplo.py`)
 - `archivo_html_salida` es el archivo HTML que se generará con el código resaltado (por defecto: `resaltado_python.html`)
 
 Este script automatiza todo el proceso:
@@ -79,26 +95,24 @@ Si prefieres ejecutar cada paso manualmente:
 
 1. Ejecuta el analizador léxico:
    ```bash
-   racket analizador-lexico.rkt
+   racket analizador-lexico.rkt [archivo_python] [archivo_csv_salida]
    ```
-   Esto generará un archivo `tokens.csv` con los tokens identificados.
+   Esto generará un archivo CSV con los tokens identificados.
 
 2. Genera el HTML con resaltado de sintaxis:
    ```bash
-   python generar_html.py tokens.csv resaltado_python.html
+   python generar_html.py [archivo_csv] [archivo_html_salida]
    ```
 
 3. Abre el archivo HTML generado en tu navegador.
 
 ## Estructura del Proyecto
 
-- `analizador-lexico.rkt`: Implementación del analizador léxico en Racket
+- `analizador-lexico.rkt`: Implementación del analizador léxico en Racket funcional puro
 - `generar_html.py`: Script Python para generar HTML con resaltado de sintaxis
 - `resaltar_codigo.py`: Script principal que automatiza todo el proceso
-- `prueba.py`: Archivo de ejemplo con código Python
-- `automatas.md`: Descripción de los autómatas finitos utilizados
+- `ejemplo.py`: Archivo de ejemplo con código Python
 - `README.md`: Este archivo
-- `INSTALACION.md`: Instrucciones detalladas para instalar Racket
 
 ## Personalización
 

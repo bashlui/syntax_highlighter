@@ -4,104 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resaltado de Sintaxis Python</title>
-    <style>
-        body {
-            font-family: 'Courier New', monospace;
-            background: #f8f8f8;
-            padding: 20px;
-            line-height: 1.6;
-        }
-        
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .code-container {
-            background: #272822;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: auto;
-        }
-        
-        pre {
-            margin: 0;
-            padding: 0;
-            background: #272822;
-            color: #f8f8f2;
-            white-space: pre-wrap;
-        }
-        
-        .stats {
-            margin-top: 30px;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .stats h2 {
-            color: #333;
-            margin-top: 0;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        
-        .stat-item {
-            background: #f1f1f1;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            color: #777;
-        }
-        
-        /* Estilos para los tokens */
-        .KEYWORD { color: #66d9ef; font-weight: bold; }
-        .IDENTIFIER { color: #f8f8f2; }
-        .NUMBER { color: #ae81ff; }
-        .STRING { color: #e6db74; }
-        .COMMENT { color: #75715e; font-style: italic; }
-        .OPERATOR { color: #f92672; }
-        .DELIMITER { color: #a6e22e; }
-        .DECORATOR { color: #a1efe4; font-weight: bold; }
-        .UNKNOWN { color: #fd971f; }
-    </style>
+    <link rel="stylesheet" href="syntax_highlighter.css">
 </head>
 <body>
     <div class="container">
         <h1>Resaltado de Sintaxis Python</h1>
         
         <div class="code-container">
-            <pre><span class="COMMENT"># Ejemplo de código Python</span><span class="NEWLINE"><br></span><span class="NUMBER">d</span><span class="IDENTIFIER">ef</span> <span class="IDENTIFIER">fibonacci</span><span class="UNKNOWN">(</span><span class="IDENTIFIER">n</span><span class="UNKNOWN">)</span><span class="UNKNOWN">:</span><span class="NEWLINE"><br></span>    <span class="STRING">&quot;&quot;</span><span class="UNKNOWN">&quot;</span><span class="IDENTIFIER">Calcula</span> <span class="IDENTIFIER">el</span> <span class="IDENTIFIER">n</span><span class="OPERATOR">-</span><span class="UNKNOWN">é</span><span class="IDENTIFIER">simo</span> <span class="IDENTIFIER">n</span><span class="UNKNOWN">ú</span><span class="IDENTIFIER">mero</span> <span class="NUMBER">d</span><span class="IDENTIFIER">e</span> <span class="IDENTIFIER">Fibonacci</span><span class="STRING">&quot;&quot;</span><span class="UNKNOWN">&quot;</span><span class="NEWLINE"><br></span>    <span class="IDENTIFIER">if</span> <span class="IDENTIFIER">n</span> <span class="OPERATOR">&lt;=</span> <span class="UNKNOWN">1</span><span class="UNKNOWN">:</span><span class="NEWLINE"><br></span>        <span class="IDENTIFIER">return</span> <span class="IDENTIFIER">n</span><span class="NEWLINE"><br></span>    <span class="IDENTIFIER">else</span><span class="UNKNOWN">:</span><span class="NEWLINE"><br></span>        <span class="IDENTIFIER">return</span> <span class="IDENTIFIER">fibonacci</span><span class="UNKNOWN">(</span><span class="IDENTIFIER">n</span><span class="OPERATOR">-</span><span class="UNKNOWN">1</span><span class="UNKNOWN">)</span> <span class="OPERATOR">+</span> <span class="IDENTIFIER">fibonacci</span><span class="UNKNOWN">(</span><span class="IDENTIFIER">n</span><span class="OPERATOR">-</span><span class="UNKNOWN">2</span><span class="UNKNOWN">)</span><span class="NEWLINE"><br></span><span class="NEWLINE"><br></span><span class="DECORATOR">@decorator</span><span class="NEWLINE"><br></span><span class="IDENTIFIER">class</span> <span class="IDENTIFIER">MiClase</span><span class="UNKNOWN">:</span><span class="NEWLINE"><br></span>    <span class="NUMBER">d</span><span class="IDENTIFIER">ef</span> <span class="IDENTIFIER">__init__</span><span class="UNKNOWN">(</span><span class="IDENTIFIER">self</span><span class="UNKNOWN">,</span> <span class="IDENTIFIER">valor</span><span class="OPERATOR">=</span><span class="UNKNOWN">4</span><span class="UNKNOWN">2</span><span class="UNKNOWN">)</span><span class="UNKNOWN">:</span><span class="NEWLINE"><br></span>        <span class="IDENTIFIER">self</span><span class="UNKNOWN">.</span><span class="IDENTIFIER">valor</span> <span class="OPERATOR">=</span> <span class="IDENTIFIER">valor</span> <span class="OPERATOR">*</span> <span class="UNKNOWN">3</span><span class="UNKNOWN">.</span><span class="UNKNOWN">1</span><span class="UNKNOWN">4</span><span class="UNKNOWN">1</span><span class="UNKNOWN">5</span><span class="UNKNOWN">9</span><span class="NEWLINE"><br></span>        <span class="NEWLINE"><br></span><span class="COMMENT"># Números en diferentes bases</span><span class="NEWLINE"><br></span><span class="IDENTIFIER">hex_num</span> <span class="OPERATOR">=</span> <span class="NUMBER">0xFF</span><span class="NEWLINE"><br></span><span class="IDENTIFIER">bin_num</span> <span class="OPERATOR">=</span> <span class="NUMBER">0b1010</span><span class="NEWLINE"><br></span><span class="IDENTIFIER">oct_num</span> <span class="OPERATOR">=</span> <span class="NUMBER">0o755</span><span class="NEWLINE"><br></span><span class="IDENTIFIER">sci_num</span> <span class="OPERATOR">=</span> <span class="UNKNOWN">1</span><span class="UNKNOWN">.</span><span class="UNKNOWN">2</span><span class="UNKNOWN">3</span><span class="IDENTIFIER">e</span><span class="OPERATOR">-</span><span class="UNKNOWN">4</span></pre>
+            <pre><span class="IDENTIFIER">import</span>&nbsp;<span class="IDENTIFIER">os</span><span class="UNKNOWN"><br></span><br><span class="COMMENT"># Comentario en hashtag<br></span><br><span class="STRING">&quot;&quot;</span><span class="STRING">&quot;A string&quot;</span><span class="STRING">&quot;&quot;</span><span class="UNKNOWN"><br></span><br><span class="UNKNOWN"><br></span><br><span class="IDENTIFIER">class</span>&nbsp;<span class="IDENTIFIER">Foo</span><span class="UNKNOWN">(</span><span class="IDENTIFIER">object</span><span class="UNKNOWN">)</span><span class="UNKNOWN">:</span><span class="UNKNOWN"><br></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IDENTIFIER">def</span>&nbsp;<span class="IDENTIFIER">_init_</span><span class="UNKNOWN">(</span><span class="IDENTIFIER">self</span><span class="UNKNOWN">)</span><span class="UNKNOWN">:</span><span class="UNKNOWN"><br></span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IDENTIFIER">num</span>&nbsp;<span class="OPERATOR">=</span>&nbsp;<span class="UNKNOWN">4</span><span class="UNKNOWN">2</span><span class="UNKNOWN"><br></span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IDENTIFIER">print</span><span class="UNKNOWN">(</span><span class="IDENTIFIER">num</span><span class="UNKNOWN">)</span><span class="UNKNOWN"><br></span><br><span class="UNKNOWN"><br></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="DECORATOR">@property</span><span class="UNKNOWN"><br></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IDENTIFIER">def</span>&nbsp;<span class="IDENTIFIER">foo</span><span class="UNKNOWN">(</span><span class="IDENTIFIER">self</span><span class="UNKNOWN">)</span><span class="UNKNOWN">:</span><span class="UNKNOWN"><br></span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IDENTIFIER">return</span>&nbsp;<span class="STRING">&#x27;bar&#x27;</span><span class="UNKNOWN"><br></span><br>&nbsp;&nbsp;&nbsp;&nbsp;</pre>
         </div>
         
         <div class="stats">
             <h2>Estadísticas</h2>
             <div class="stats-grid">
                 <div class="stat-item">
-                    <strong>Total de tokens:</strong> 148
+                    <strong>Total de tokens:</strong> 72
                 </div>
-                <div class="stat-item"><strong>COMMENT:</strong> 2</div><div class="stat-item"><strong>NEWLINE:</strong> 17</div><div class="stat-item"><strong>NUMBER:</strong> 6</div><div class="stat-item"><strong>IDENTIFIER:</strong> 35</div><div class="stat-item"><strong>WHITESPACE:</strong> 36</div><div class="stat-item"><strong>UNKNOWN:</strong> 36</div><div class="stat-item"><strong>STRING:</strong> 2</div><div class="stat-item"><strong>OPERATOR:</strong> 13</div><div class="stat-item"><strong>DECORATOR:</strong> 1</div>
+                <div class="stat-item"><strong>COMMENT:</strong> 1</div>
+                <div class="stat-item"><strong>DECORATOR:</strong> 1</div>
+                <div class="stat-item"><strong>IDENTIFIER:</strong> 15</div>
+                <div class="stat-item"><strong>NEWLINE:</strong> 12</div>
+                <div class="stat-item"><strong>OPERATOR:</strong> 1</div>
+                <div class="stat-item"><strong>STRING:</strong> 4</div>
+                <div class="stat-item"><strong>UNKNOWN:</strong> 24</div>
+                <div class="stat-item"><strong>WHITESPACE:</strong> 14</div>
             </div>
         </div>
         
         <div class="footer">
-            <p>Generado el 2025-06-04 17:08:08</p>
+            <p>Generado el 2025-06-05 13:02:12</p>
         </div>
     </div>
 </body>
