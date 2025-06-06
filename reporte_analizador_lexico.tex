@@ -1,0 +1,560 @@
+\documentclass[12pt,letterpaper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning,arrows}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Reporte: Analizador Léxico para Python},
+    pdfpagemode=FullScreen,
+}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{red},
+  showstringspaces=false,
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=5pt,
+  frame=single,
+  breaklines=true,
+  breakatwhitespace=true
+}
+
+\title{Analizador Léxico para Python}
+\author{Equipo 8}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\chapter{Introducción}
+
+Este reporte documenta el desarrollo de un analizador léxico para el lenguaje de programación Python. El analizador está implementado utilizando Racket para el análisis léxico y Python para la generación del HTML con resaltado de sintaxis.
+
+El objetivo principal del proyecto es reconocer y clasificar correctamente los diferentes elementos léxicos del lenguaje Python, permitiendo así su posterior procesamiento o visualización con resaltado de sintaxis.
+
+\chapter{Lenguaje de Programación Elegido}
+
+\section{Python}
+
+Para este proyecto, se eligió implementar un analizador léxico para el lenguaje de programación Python por las siguientes razones:
+
+\begin{itemize}
+    \item \textbf{Popularidad}: Python es uno de los lenguajes más utilizados en la actualidad, especialmente en áreas como ciencia de datos, inteligencia artificial y desarrollo web.
+    \item \textbf{Sintaxis clara}: La sintaxis de Python está diseñada para ser legible y clara, lo que facilita su análisis léxico.
+    \item \textbf{Diversidad de elementos léxicos}: Python incluye una amplia variedad de elementos léxicos, como palabras reservadas, identificadores, diferentes tipos de literales numéricos y de cadenas, operadores, etc.
+    \item \textbf{Indentación significativa}: A diferencia de otros lenguajes, Python utiliza la indentación para delimitar bloques de código, lo que añade un desafío interesante para el análisis léxico.
+\end{itemize}
+
+El analizador léxico desarrollado se basa en la versión 3.x de Python, que es la versión actual y más utilizada del lenguaje.
+
+\chapter{Diccionario de Categorías Léxicas}
+
+El analizador reconoce las siguientes categorías léxicas en el lenguaje Python:
+
+\section{KEYWORD (Palabras Reservadas)}
+
+Las palabras reservadas son identificadores predefinidos que tienen un significado especial en el lenguaje y no pueden ser utilizados como nombres de variables o funciones.
+
+\begin{lstlisting}[language=Python]
+and       as        assert    async     await
+break     class     continue  def       del
+elif      else      except    False     finally
+for       from      global    if        import
+in        is        lambda    None      nonlocal
+not       or        pass      raise     return
+True      try       while     with      yield
+\end{lstlisting}
+
+\section{IDENTIFIER (Identificadores)}
+
+Los identificadores son nombres utilizados para identificar variables, funciones, clases, módulos y otros objetos en Python.
+
+\begin{itemize}
+    \item Deben comenzar con una letra (a-z, A-Z) o un guion bajo (\_).
+    \item Después del primer carácter, pueden contener letras, números y guiones bajos.
+    \item Son sensibles a mayúsculas y minúsculas (ej: \texttt{variable} y \texttt{Variable} son diferentes).
+\end{itemize}
+
+Ejemplos:
+\begin{lstlisting}[language=Python]
+variable_normal = 10
+_variable_con_guion_bajo = 20
+CamelCase = 30
+snake_case_variable = 40
+\end{lstlisting}
+
+\section{NUMBER (Números)}
+
+Python admite varios tipos de literales numéricos:
+
+\begin{itemize}
+    \item \textbf{Enteros}: Números sin parte decimal.
+    \item \textbf{Flotantes}: Números con parte decimal o en notación científica.
+    \item \textbf{Hexadecimales}: Números en base 16, precedidos por \texttt{0x} o \texttt{0X}.
+    \item \textbf{Binarios}: Números en base 2, precedidos por \texttt{0b} o \texttt{0B}.
+    \item \textbf{Octales}: Números en base 8, precedidos por \texttt{0o} o \texttt{0O}.
+    \item \textbf{Complejos}: Números con parte real e imaginaria.
+\end{itemize}
+
+Ejemplos:
+\begin{lstlisting}[language=Python]
+entero = 42
+entero_negativo = -42
+entero_grande = 1000000
+
+flotante = 3.14
+flotante_notacion = 1.5e10
+flotante_negativo = -0.5
+
+hexadecimal = 0xFF
+binario = 0b1010
+octal = 0o755
+complejo = 3+4j
+\end{lstlisting}
+
+\section{STRING (Cadenas)}
+
+Python admite varios tipos de literales de cadena:
+
+\begin{itemize}
+    \item \textbf{Cadenas simples}: Delimitadas por comillas simples (\texttt{'}).
+    \item \textbf{Cadenas dobles}: Delimitadas por comillas dobles (\texttt{"}).
+    \item \textbf{Cadenas triples}: Delimitadas por tres comillas simples (\texttt{'''}) o tres comillas dobles (\texttt{"""}).
+    \item \textbf{F-strings}: Cadenas con formato, precedidas por \texttt{f} o \texttt{F}.
+\end{itemize}
+
+Ejemplos:
+\begin{lstlisting}[language=Python]
+cadena_simple = 'Esto es una cadena con comillas simples'
+cadena_doble = "Esto es una cadena con comillas dobles"
+cadena_triple = """Esta es una cadena
+con múltiples líneas
+usando comillas triples dobles"""
+cadena_triple_simple = '''Otra cadena
+con múltiples líneas
+usando comillas triples simples'''
+cadena_f = f"El valor es {variable_normal}"
+\end{lstlisting}
+
+\section{COMMENT (Comentarios)}
+
+Los comentarios en Python comienzan con el carácter \texttt{\#} y continúan hasta el final de la línea.
+
+Ejemplo:
+\begin{lstlisting}[language=Python]
+# Este es un comentario de una línea
+variable = 42  # Este es un comentario al final de una línea
+\end{lstlisting}
+
+\section{OPERATOR (Operadores)}
+
+Python admite varios tipos de operadores:
+
+\begin{itemize}
+    \item \textbf{Aritméticos}: \texttt{+}, \texttt{-}, \texttt{*}, \texttt{/}, \texttt{//}, \texttt{\%}, \texttt{**}
+    \item \textbf{Comparación}: \texttt{==}, \texttt{!=}, \texttt{<}, \texttt{>}, \texttt{<=}, \texttt{>=}
+    \item \textbf{Lógicos}: \texttt{and}, \texttt{or}, \texttt{not}
+    \item \textbf{Asignación}: \texttt{=}, \texttt{+=}, \texttt{-=}, \texttt{*=}, \texttt{/=}, \texttt{//=}, \texttt{\%=}, \texttt{**=}
+    \item \textbf{Bit a bit}: \texttt{\&}, \texttt{|}, \texttt{\^}, \texttt{\~}, \texttt{<<}, \texttt{>>}
+\end{itemize}
+
+Ejemplos:
+\begin{lstlisting}[language=Python]
+suma = 5 + 3
+resta = 5 - 3
+multiplicacion = 5 * 3
+division = 5 / 3
+division_entera = 5 // 3
+modulo = 5 % 3
+potencia = 5 ** 3
+
+igual = 5 == 3
+diferente = 5 != 3
+mayor = 5 > 3
+menor = 5 < 3
+mayor_igual = 5 >= 3
+menor_igual = 5 <= 3
+
+and_logico = True and False
+or_logico = True or False
+not_logico = not True
+
+x = 10
+x += 5
+x -= 2
+x *= 3
+x /= 2
+x //= 2
+x %= 3
+x **= 2
+
+bit_and = 5 & 3
+bit_or = 5 | 3
+bit_xor = 5 ^ 3
+bit_not = ~5
+bit_shift_left = 5 << 1
+bit_shift_right = 5 >> 1
+\end{lstlisting}
+
+\section{DELIMITER (Delimitadores)}
+
+Los delimitadores son caracteres especiales que delimitan estructuras en Python:
+
+\begin{itemize}
+    \item \textbf{Paréntesis}: \texttt{(}, \texttt{)}
+    \item \textbf{Corchetes}: \texttt{[}, \texttt{]}
+    \item \textbf{Llaves}: \texttt{\{}, \texttt{\}}
+    \item \textbf{Otros}: \texttt{,}, \texttt{.}, \texttt{:}, \texttt{;}, \texttt{@}
+\end{itemize}
+
+Ejemplos:
+\begin{lstlisting}[language=Python]
+lista = [1, 2, 3]
+tupla = (1, 2, 3)
+diccionario = {"clave": "valor"}
+conjunto = {1, 2, 3}
+llamada_funcion = print("Hola")
+indice = lista[0]
+atributo = objeto.atributo
+punto_y_coma = 1; 2
+dos_puntos = {"a": 1}
+\end{lstlisting}
+
+\section{DECORATOR (Decoradores)}
+
+Los decoradores son una forma especial de sintaxis que modifica el comportamiento de funciones o clases.
+
+Ejemplo:
+\begin{lstlisting}[language=Python]
+@property
+def mi_propiedad(self):
+    return 42
+\end{lstlisting}
+
+\section{WHITESPACE (Espacios en Blanco)}
+
+Los espacios en blanco incluyen espacios, tabulaciones y otros caracteres que no son visibles pero afectan la estructura del código.
+
+\section{NEWLINE (Saltos de Línea)}
+
+Los saltos de línea delimitan las líneas de código en Python y son especialmente importantes debido a la significancia de la indentación.
+
+\chapter{Diseño de los Autómatas}
+
+\section{Autómatas para Categorías Léxicas}
+
+Para cada categoría léxica, se ha diseñado un autómata finito (NFA o DFA) que reconoce los tokens correspondientes. A continuación, se describen los autómatas para las principales categorías léxicas.
+
+\subsection{Palabras Reservadas (KEYWORD)}
+
+El autómata para palabras reservadas reconoce tokens como \texttt{if}, \texttt{else}, \texttt{for}, \texttt{while}, etc.
+
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+   \node[state,initial] (q0)   {$q_0$}; 
+   \node[state,accepting] (q1) [right=of q0] {$q_1$}; 
+   \path[->] 
+    (q0) edge node {palabra reservada} (q1);
+\end{tikzpicture}
+
+Donde "palabra reservada" es cualquiera de las palabras reservadas de Python listadas anteriormente. El autómata verifica que la palabra esté delimitada por espacios, operadores o delimitadores.
+
+\subsection{Identificadores (IDENTIFIER)}
+
+El autómata para identificadores reconoce nombres de variables, funciones, etc.
+
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+   \node[state,initial] (q0)   {$q_0$}; 
+   \node[state] (q1) [right=of q0] {$q_1$}; 
+   \node[state,accepting] (q2) [right=of q1] {$q_2$}; 
+   \path[->] 
+    (q0) edge node {[a-zA-Z\_]} (q1)
+    (q1) edge [loop above] node {[a-zA-Z0-9\_]} (q1)
+    (q1) edge node {fin} (q2);
+\end{tikzpicture}
+
+\subsection{Números (NUMBER)}
+
+El autómata para números reconoce enteros, flotantes, y números en diferentes bases.
+
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto,scale=0.8, transform shape] 
+   \node[state,initial] (q0)   {$q_0$}; 
+   \node[state] (q1) [right=of q0] {$q_1$}; 
+   \node[state,accepting] (q3) [right=of q1] {$q_3$}; 
+   \node[state] (q4) [below=of q1] {$q_4$}; 
+   \node[state,accepting] (q5) [right=of q4] {$q_5$}; 
+   \node[state] (q6) [below=of q3] {$q_6$}; 
+   \node[state] (q7) [right=of q6] {$q_7$}; 
+   \node[state,accepting] (q8) [right=of q7] {$q_8$}; 
+   \path[->] 
+    (q0) edge node {[0-9]} (q1)
+    (q1) edge [loop above] node {[0-9]} (q1)
+    (q1) edge node {fin} (q3)
+    (q1) edge node {.} (q4)
+    (q4) edge node {[0-9]} (q5)
+    (q5) edge [loop right] node {[0-9]} (q5)
+    (q3) edge [bend left] node {e,E} (q6)
+    (q5) edge [bend right] node {e,E} (q6)
+    (q6) edge node {+,-} (q7)
+    (q6) edge [bend left] node {[0-9]} (q8)
+    (q7) edge node {[0-9]} (q8)
+    (q8) edge [loop right] node {[0-9]} (q8);
+\end{tikzpicture}
+
+El diagrama anterior muestra una versión simplificada del autómata para números. El autómata completo incluiría también las transiciones para hexadecimales, binarios y octales.
+
+\subsection{Cadenas (STRING)}
+
+El autómata para cadenas reconoce diferentes tipos de cadenas en Python.
+
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto,scale=0.8, transform shape] 
+   \node[state,initial] (q0)   {$q_0$}; 
+   \node[state] (q1) [right=of q0] {$q_1$}; 
+   \node[state,accepting] (q2) [right=of q1] {$q_2$}; 
+   \node[state] (q3) [below=of q0] {$q_3$}; 
+   \node[state,accepting] (q4) [right=of q3] {$q_4$}; 
+   \path[->] 
+    (q0) edge node {'} (q1)
+    (q1) edge [loop above] node {[^'\n]} (q1)
+    (q1) edge node {'} (q2)
+    (q0) edge node {"} (q3)
+    (q3) edge [loop below] node {[^"\n]} (q3)
+    (q3) edge node {"} (q4);
+\end{tikzpicture}
+
+El diagrama anterior muestra una versión simplificada del autómata para cadenas simples y dobles. El autómata completo incluiría también las transiciones para cadenas triples y f-strings.
+
+\subsection{Comentarios (COMMENT)}
+
+El autómata para comentarios reconoce líneas que comienzan con \#.
+
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+   \node[state,initial] (q0)   {$q_0$}; 
+   \node[state] (q1) [right=of q0] {$q_1$}; 
+   \node[state,accepting] (q2) [right=of q1] {$q_2$}; 
+   \path[->] 
+    (q0) edge node {\#} (q1)
+    (q1) edge [loop above] node {[^\n]} (q1)
+    (q1) edge node {\n} (q2);
+\end{tikzpicture}
+
+\section{NFA/DFA General}
+
+El analizador léxico implementa un modelo de autómatas finitos que integra todos los autómatas individuales descritos anteriormente. El enfoque utilizado es el de "competencia" entre los diferentes autómatas:
+
+\begin{enumerate}
+    \item En cada posición del código fuente, se intenta aplicar cada autómata.
+    \item El autómata que consuma la secuencia más larga de caracteres "gana".
+    \item Si ningún autómata puede consumir caracteres, se trata como un carácter desconocido.
+\end{enumerate}
+
+Este enfoque garantiza que los tokens se reconozcan correctamente incluso cuando hay ambigüedades (por ejemplo, entre palabras reservadas e identificadores).
+
+El NFA general se puede representar conceptualmente como la unión de todos los NFAs individuales, con un estado inicial común que puede transitar a cualquiera de los estados iniciales de los NFAs individuales.
+
+\chapter{Diseño de la Aplicación Completa}
+
+\section{Arquitectura}
+
+La aplicación se divide en dos componentes principales:
+
+\begin{enumerate}
+    \item \textbf{Analizador Léxico (Racket)}: Implementa los autómatas finitos que reconocen las diferentes categorías léxicas y genera un archivo CSV con los tokens identificados.
+    \item \textbf{Generador de HTML (Python)}: Lee el archivo CSV generado por el analizador léxico y genera un archivo HTML con el código resaltado según las categorías léxicas identificadas.
+\end{enumerate}
+
+\section{Implementación del Analizador Léxico}
+
+El analizador léxico está implementado en Racket, un lenguaje de programación funcional derivado de Scheme. La implementación sigue un enfoque funcional puro, donde las funciones no tienen efectos secundarios y el estado se pasa explícitamente entre las funciones.
+
+Las expresiones regulares se utilizan para implementar los autómatas finitos que reconocen las diferentes categorías léxicas. Cada expresión regular representa implícitamente un autómata finito, y el proceso de matching de estas expresiones regulares contra el texto de entrada simula la ejecución de estos autómatas.
+
+\begin{lstlisting}[language=Lisp]
+;; Definición de las expresiones regulares para las categorías léxicas
+(define token-regexps
+  (list
+   ;; Palabras reservadas
+   (list "KEYWORD" 
+         (pregexp "^\\b(and|as|assert|async|await|break|class|continue|def|del|elif|else|except|False|finally|for|from|global|if|import|in|is|lambda|None|nonlocal|not|or|pass|raise|return|True|try|while|with|yield)\\b"))
+   
+   ;; Cadenas triples
+   (list "STRING_TRIPLE" 
+         (pregexp "^(\"\"\"[\\s\\S]*?\"\"\"|'''[\\s\\S]*?''')"))
+   
+   ;; Comentarios
+   (list "COMMENT" 
+         (pregexp "^#.*"))
+   
+   ;; F-strings
+   (list "STRING_F" 
+         (pregexp "^[fF](\"[^\"\\n]*\"|'[^'\\n]*')"))
+   
+   ;; Cadenas simples y dobles
+   (list "STRING" 
+         (pregexp "^(\"[^\"\\n]*\"|'[^'\\n]*')"))
+   
+   ;; Números
+   (list "NUMBER" 
+         (pregexp "^\\b(0[xX][0-9a-fA-F]+|0[bB][01]+|0[oO][0-7]+|\\d+\\.\\d*|\\.\\d+|\\d+)([eE][+-]?\\d+)?\\b"))
+   
+   ;; Decoradores
+   (list "DECORATOR" 
+         (pregexp "^@[a-zA-Z_][a-zA-Z0-9_]*"))
+   
+   ;; Operadores
+   (list "OPERATOR" 
+         (pregexp "^(\\*\\*=|//=|\\+=|-=|\\*=|/=|%=|&=|\\|=|\\^=|>>=|<<=|\\*\\*|//|==|!=|<=|>=|<>|<<|>>|\\+|-|\\*|/|%|\\^|&|\\||~|<|>|=)"))
+   
+   ;; Delimitadores
+   (list "DELIMITER" 
+         (pregexp "^[()\\[\\]{},.:;@]"))
+   
+   ;; Identificadores
+   (list "IDENTIFIER" 
+         (pregexp "^[a-zA-Z_][a-zA-Z0-9_]*"))
+   
+   ;; Espacios en blanco
+   (list "WHITESPACE" 
+         (pregexp "^[ \t]+"))
+   
+   ;; Saltos de línea
+   (list "NEWLINE" 
+         (pregexp "^\n"))
+   ))
+\end{lstlisting}
+
+La función \texttt{match-token} implementa la competencia entre autómatas al probar cada expresión regular en un orden específico y devolver el primer match exitoso.
+
+\section{Implementación del Generador de HTML}
+
+El generador de HTML está implementado en Python y lee el archivo CSV generado por el analizador léxico para generar un archivo HTML con el código resaltado según las categorías léxicas identificadas.
+
+El archivo HTML generado incluye estilos CSS que definen el formato de cada categoría léxica, permitiendo así un resaltado de sintaxis personalizado.
+
+\begin{lstlisting}[language=Python]
+def generar_html(tokens, archivo_salida):
+    """
+    Genera un archivo HTML con el código resaltado según los tokens identificados.
+    
+    Args:
+        tokens: Lista de tokens (tipo, valor, línea, columna)
+        archivo_salida: Ruta del archivo HTML de salida
+    """
+    html = """<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Código Python Resaltado</title>
+    <link rel="stylesheet" href="syntax_highlighter.css">
+</head>
+<body>
+    <pre><code>"""
+    
+    # Ordenar tokens por línea y columna
+    tokens.sort(key=lambda t: (int(t[2]), int(t[3])))
+    
+    # Generar HTML con los tokens resaltados
+    for token in tokens:
+        tipo, valor, _, _ = token
+        valor_html = html_escape(valor)
+        html += f'<span class="{tipo.lower()}">{valor_html}</span>'
+    
+    html += """</code></pre>
+</body>
+</html>"""
+    
+    # Escribir el archivo HTML
+    with open(archivo_salida, 'w', encoding='utf-8') as f:
+        f.write(html)
+\end{lstlisting}
+
+\section{Flujo de Trabajo}
+
+El flujo de trabajo completo de la aplicación es el siguiente:
+
+\begin{enumerate}
+    \item El usuario proporciona un archivo de código Python como entrada.
+    \item El analizador léxico en Racket procesa el archivo y genera un archivo CSV con los tokens identificados.
+    \item El generador de HTML en Python lee el archivo CSV y genera un archivo HTML con el código resaltado.
+    \item El usuario puede abrir el archivo HTML en un navegador para ver el código resaltado.
+\end{enumerate}
+
+\chapter{Manual de Usuario}
+
+\section{Requisitos}
+
+Para utilizar el analizador léxico, necesitas tener instalado:
+
+\begin{itemize}
+    \item Racket (versión 7.0 o superior)
+    \item Python 3.6 o superior
+\end{itemize}
+
+\section{Instalación}
+
+\begin{enumerate}
+    \item Instala Racket desde \url{https://racket-lang.org/download/}
+    \item Asegúrate de tener Python 3.6 o superior instalado
+    \item Clona o descarga el repositorio del proyecto
+\end{enumerate}
+
+\section{Uso}
+
+La forma más sencilla de usar el programa es mediante el script \texttt{generar\_html.py}:
+
+\begin{lstlisting}[language=bash]
+python generar_html.py [archivo_csv] [archivo_html_salida]
+\end{lstlisting}
+
+Para generar el archivo CSV de tokens:
+
+\begin{lstlisting}[language=bash]
+racket analizador-lexico.rkt [archivo_python] [archivo_csv_salida]
+\end{lstlisting}
+
+Ejemplo completo:
+
+\begin{lstlisting}[language=bash]
+racket analizador-lexico.rkt ejemplo.py tokens.csv
+python generar_html.py tokens.csv resaltado_python.html
+\end{lstlisting}
+
+\section{Personalización}
+
+\subsection{Modificar los Estilos}
+
+Puedes personalizar los estilos de resaltado modificando el archivo \texttt{syntax\_highlighter.css}. Este archivo contiene las definiciones de estilo para cada categoría léxica.
+
+\subsection{Añadir Nuevas Categorías Léxicas}
+
+Para añadir nuevas categorías léxicas:
+
+\begin{enumerate}
+    \item Añade la expresión regular correspondiente en \texttt{analizador-lexico.rkt}
+    \item Añade el estilo CSS para la nueva categoría en \texttt{syntax\_highlighter.css}
+\end{enumerate}
+
+\chapter{Conclusiones}
+
+El analizador léxico para Python desarrollado en este proyecto demuestra la aplicación práctica de los conceptos teóricos de autómatas finitos y expresiones regulares en el análisis de lenguajes de programación.
+
+La implementación combina la potencia de la programación funcional en Racket para el análisis léxico con la flexibilidad de Python para la generación de HTML con resaltado de sintaxis.
+
+El resultado es una herramienta útil que puede ser utilizada para entender mejor la estructura léxica del lenguaje Python y como base para desarrollar herramientas más avanzadas, como analizadores sintácticos o compiladores.
+
+\end{document} 
