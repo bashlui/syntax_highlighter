@@ -37,6 +37,7 @@ pre {
     color: #abb2bf;
     white-space: pre-wrap;
     tab-size: 4;
+    line-height: 1.8;
 }
 
 .stats {
@@ -67,38 +68,129 @@ pre {
     border-radius: 5px;
 }
 
+/* Efecto hover para stats */
+.stat-item:hover {
+    background: #3b4048;
+    transition: background 0.2s ease;
+  }
+
 .footer {
     margin-top: 30px;
     text-align: center;
     color: #5c6370;
 }
 
-/* --- Estilos de Tokens (One Dark Pro) --- */
+/* --- Roles Léxicos Mejorados --- */
 
-/* Roles Léxicos Básicos */
-.KEYWORD { color: #c678dd; }           /* Magenta */
-.IDENTIFIER { color: #abb2bf; }         /* Gris claro (texto normal) */
-.NUMBER { color: #d19a66; }             /* Naranja */
+/* Palabras clave y control de flujo */
+.KEYWORD { 
+    color: #c678dd;
+    font-weight: bold;
+  }
+  
+  /* Identificadores */
+  .IDENTIFIER { 
+    color: #e36b60; /* Más consistente con el texto base */
+  }
+  
+  /* Números (con variaciones sutiles) */
+  .NUMBER { 
+    color: #d19a66;
+  }
+  .NUMBER_INT { color: #d19a66; }
+  .NUMBER_FLOAT { color: #e2a86d; } /* Ligeramente más claro */
+  .NUMBER_HEX { color: #d19a66; text-decoration: underline; }
+  .NUMBER_BIN { color: #c88a4a; } /* Naranja más oscuro */
+  .NUMBER_OCT { color: #d19a66; opacity: 0.9; }
+  .NUMBER_COMPLEX { 
+    color: #e2a86d;
+    font-style: italic;
+  }
+  
+  /* Cadenas */
+  .STRING { 
+    color: #98c379;
+  }
+  .STRING_TRIPLE { 
+    color: #a5c97b; /* Verde más claro para docstrings */
+  }
+  .STRING_F { 
+    color: #8fb573; /* Verde más oscuro para f-strings */
+    text-decoration: underline wavy #8fb57333; /* Subrayado sutil */
+  }
+  
+  /* Comentarios */
+  .COMMENT { 
+    color: #5c6370;
+    font-style: italic;
+  }
+  
+  /* Operadores y delimitadores */
+  .OPERATOR { 
+    color: #56b6c2;
+    font-weight: bold;
+  }
+  .DELIMITER { 
+    color: #eeb83a; /* Igual que texto normal */
+  }
+  
+  /* Decoradores */
+  .DECORATOR { 
+    color: #e5c07b;
+    text-shadow: 0 0 2px rgba(229, 192, 123, 0.3);
+  }
+  
+  /* Tokens desconocidos/errores */
+  .UNKNOWN { 
+    color: #e06c75;
+    background-color: #3a2a2a; /* Fondo oscuro para destacar */
+    border-bottom: 1px dashed #e06c75;
+  }
+  
+  /* --- Roles Sintácticos Mejorados --- */
+  
+  /* Clases */
+  .CLASS_NAME { 
+    color: #e5c07b;
+    border-bottom: 1px dotted #e5c07b; /* Subrayado sutil */
+  }
+  
+  /* Funciones */
+  .FUNCTION_NAME,
+  .FUNCTION_CALL,
+  .BUILTIN_FUNCTION { 
+    color: #61afef;
+  }
+  .FUNCTION_CALL {
+    font-style: italic; /* Para distinguir llamadas */
+  }
+  
+  /* Parámetros */
+  .PARAMETER { 
+    color: #f78c6c;
+    font-style: italic;
+  }
+  .SELF_PARAM { 
+    color: #ff9580;
+    font-weight: bold;
+    font-style: italic;
+  }
+  
+  /* Importaciones */
+  .IMPORT { 
+    color: #c678dd; /* Mismo que keywords */
+    font-weight: bold;
+  }
+  
+  /* Control de flujo (if, for, while) */
+  .CONTROL_FLOW { 
+    color: #d85896; /* Magenta más claro */
+    font-weight: bold;
+  }
 
-/* Tipos de números */
-.NUMBER_INT { color: #d19a66; }         /* Naranja */
-.NUMBER_FLOAT { color: #d19a66; }       /* Naranja */
-.NUMBER_HEX { color: #d19a66; }         /* Naranja */
-.NUMBER_BIN { color: #d19a66; }         /* Naranja */
-.NUMBER_OCT { color: #d19a66; }         /* Naranja */
-.NUMBER_COMPLEX { color: #d19a66; }     /* Naranja */
-
-.STRING, .STRING_TRIPLE, .STRING_F { color: #98c379; } /* Verde */
-.COMMENT { color: #5c6370; font-style: italic; } /* Gris oscuro */
-.OPERATOR { color: #56b6c2; }           /* Cian */
-.DELIMITER { color: #abb2bf; }          /* Gris claro (como el texto) */
-.DECORATOR { color: #e5c07b; }          /* Amarillo/Dorado */
-.UNKNOWN { color: #e06c75; text-decoration: underline; } /* Rojo */
-
-/* Roles Sintácticos (Post-procesados) */
-.CLASS_NAME { color: #e5c07b; }         /* Amarillo/Dorado */
-.FUNCTION_NAME { color: #61afef; }      /* Azul */
-.FUNCTION_CALL { color: #61afef; }      /* Azul (mismo color que FUNCTION_NAME) */
-.BUILTIN_FUNCTION { color: #61afef; }   /* Azul */
-.PARAMETER { color: #f78c6c; font-weight: bold; } /* Naranja brillante, negrita para resaltar */
-.SELF_PARAM { color: #ff9580; font-style: italic; font-weight: bold; } /* Naranja-rosado, cursiva y negrita */
+/* Resaltado especial para docstrings */
+.STRING_TRIPLE {
+    background-color: #2c313a20;
+    padding: 2px 0;
+    border-radius: 2px;
+  }

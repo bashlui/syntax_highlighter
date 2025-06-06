@@ -19,6 +19,19 @@ El analizador reconoce las siguientes categorías léxicas:
 - **WHITESPACE**: Espacios en blanco
 - **NEWLINE**: Saltos de línea
 
+## Archivo de Ejemplo
+
+El archivo `ejemplo.py` incluye ejemplos de todos los tipos de tokens que el analizador puede reconocer:
+
+- Palabras clave (if, else, for, while, try, except, etc.)
+- Diferentes tipos de identificadores (snake_case, CamelCase, etc.)
+- Números (enteros, flotantes, hexadecimales, binarios, octales, complejos)
+- Cadenas de texto (simples, dobles, triples, f-strings)
+- Operadores aritméticos, de comparación, lógicos y de bits
+- Delimitadores y otros elementos sintácticos
+
+Este archivo sirve como prueba exhaustiva para verificar el correcto funcionamiento del analizador léxico.
+
 ## Expresiones Regulares
 
 Cada categoría léxica se define mediante expresiones regulares:
@@ -72,60 +85,54 @@ Cada categoría léxica se define mediante expresiones regulares:
 2. Asegúrate de tener Python 3.6 o superior instalado
 3. Clona o descarga este repositorio
 
+Para más detalles sobre la instalación, consulta el archivo `INSTALACION.md`.
+
 ## Uso
 
-La forma más sencilla de usar el programa es mediante el script `resaltar_codigo.py`:
+La forma más sencilla de usar el programa es mediante el script `generar_html.py`:
 
 ```bash
-python resaltar_codigo.py [archivo_python] [archivo_html_salida]
+python generar_html.py [archivo_csv] [archivo_html_salida]
 ```
 
-Donde:
-- `archivo_python` es el archivo de código Python que deseas analizar (por defecto: `ejemplo.py`)
-- `archivo_html_salida` es el archivo HTML que se generará con el código resaltado (por defecto: `resaltado_python.html`)
+Para generar el archivo CSV de tokens:
 
-Este script automatiza todo el proceso:
-1. Ejecuta el analizador léxico en Racket
-2. Genera el HTML con resaltado de sintaxis
-3. Abre el resultado en tu navegador por defecto
+```bash
+racket analizador-lexico.rkt [archivo_python] [archivo_csv_salida]
+```
 
-### Uso Manual
+### Ejemplo completo:
 
-Si prefieres ejecutar cada paso manualmente:
-
-1. Ejecuta el analizador léxico:
-   ```bash
-   racket analizador-lexico.rkt [archivo_python] [archivo_csv_salida]
-   ```
-   Esto generará un archivo CSV con los tokens identificados.
-
-2. Genera el HTML con resaltado de sintaxis:
-   ```bash
-   python generar_html.py [archivo_csv] [archivo_html_salida]
-   ```
-
-3. Abre el archivo HTML generado en tu navegador.
+```bash
+racket analizador-lexico.rkt ejemplo.py tokens.csv
+python generar_html.py tokens.csv resaltado_python.html
+```
 
 ## Estructura del Proyecto
 
 - `analizador-lexico.rkt`: Implementación del analizador léxico en Racket funcional puro
 - `generar_html.py`: Script Python para generar HTML con resaltado de sintaxis
-- `resaltar_codigo.py`: Script principal que automatiza todo el proceso
-- `ejemplo.py`: Archivo de ejemplo con código Python
+- `ejemplo.py`: Archivo de ejemplo con código Python que muestra todos los tipos de tokens
+- `syntax_highlighter.css`: Estilos CSS para el resaltado de sintaxis
+- `tokens.csv`: Archivo generado con los tokens identificados
+- `resaltado_python.html`: Archivo HTML generado con el código resaltado
+- `verificador.py`: Script para verificar la correcta tokenización
+- `automatas.md`: Documentación sobre los autómatas utilizados
+- `INSTALACION.md`: Guía detallada de instalación
 - `README.md`: Este archivo
 
 ## Personalización
 
 ### Modificar los Estilos
 
-Puedes personalizar los estilos de resaltado modificando la sección de estilos CSS en el archivo `generar_html.py`.
+Puedes personalizar los estilos de resaltado modificando el archivo `syntax_highlighter.css`.
 
 ### Añadir Nuevas Categorías Léxicas
 
 Para añadir nuevas categorías léxicas:
 
 1. Añade la expresión regular correspondiente en `analizador-lexico.rkt`
-2. Añade el estilo CSS para la nueva categoría en `generar_html.py`
+2. Añade el estilo CSS para la nueva categoría en `syntax_highlighter.css`
 
 ## Implementación
 
