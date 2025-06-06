@@ -10,91 +10,146 @@ import os
 import sys
 import csv
 import html
+import re
 from datetime import datetime
 
+# Lista de funciones "built-in" de Python
+PYTHON_BUILTINS = {
+    'abs', 'all', 'any', 'ascii', 'bin', 'bool', 'breakpoint', 'bytearray', 'bytes',
+    'callable', 'chr', 'classmethod', 'compile', 'complex', 'delattr', 'dict',
+    'dir', 'divmod', 'enumerate', 'eval', 'exec', 'filter', 'float', 'format',
+    'frozenset', 'getattr', 'globals', 'hasattr', 'hash', 'help', 'hex', 'id',
+    'input', 'int', 'isinstance', 'issubclass', 'iter', 'len', 'list', 'locals',
+    'map', 'max', 'memoryview', 'min', 'next', 'object', 'oct', 'open', 'ord',
+    'pow', 'print', 'property', 'range', 'repr', 'reversed', 'round', 'set',
+    'setattr', 'slice', 'sorted', 'staticmethod', 'str', 'sum', 'super', 'tuple',
+    'type', 'vars', 'zip'
+}
+
 def leer_tokens_csv(archivo_csv):
-    """Lee los tokens desde un archivo CSV"""
+    """Lee los tokens desde un archivo CSV con formato simplificado"""
     tokens = []
     try:
         with open(archivo_csv, 'r', encoding='utf-8') as f:
-            lector_csv = csv.reader(f, quotechar='"', delimiter=',', quoting=csv.QUOTE_ALL)
+            # Leer con DictReader para manejar encabezados
+            lector_csv = csv.DictReader(f)
             for fila in lector_csv:
-                if len(fila) >= 2:
-                    tipo = fila[0]
-                    lexema = fila[1].replace('\\n', '\n')
+                # Adaptarse al nuevo formato CSV
+                if 'tipo' in fila and 'lexema' in fila:
+                    tipo = fila['tipo']
+                    lexema = fila['lexema'].replace('\\n', '\n')
                     tokens.append((tipo, lexema))
-                # Omitir filas vacías o malformadas en silencio
+                # Compatibilidad con formato anterior
+                elif 'Category' in fila and 'Lexeme' in fila:
+                    tipo = fila['Category']
+                    lexema = fila['Lexeme'].replace('\\n', '\n')
+                    tokens.append((tipo, lexema))
     except Exception as e:
         print(f"Error al leer el archivo CSV: {e}")
         sys.exit(1)
     return tokens
 
 def post_process_tokens(tokens):
-    """Re-clasifica identificadores basados en el contexto (clases, funciones, parámetros)."""
-    processed_tokens = list(tokens)  # Crear una copia mutable
-
-    for i in range(len(processed_tokens) - 2):
-        t_keyword = processed_tokens[i]
-        t_space = processed_tokens[i+1]
-        t_name = processed_tokens[i+2]
-
-        # Patrón: KEYWORD('class'/'def') WHITESPACE IDENTIFIER
-        if (t_keyword[0] == 'KEYWORD' and t_keyword[1] in ['class', 'def'] and
-            t_space[0] == 'WHITESPACE' and
-            t_name[0] == 'IDENTIFIER'):
-            
-            new_type = 'CLASS_NAME' if t_keyword[1] == 'class' else 'FUNCTION_NAME'
-            processed_tokens[i+2] = (new_type, t_name[1])
-
-            # Si es una función, buscar los parámetros
-            if new_type == 'FUNCTION_NAME':
-                paren_level = 0
-                start_paren = -1
-                end_paren = -1
-
-                # Buscar el bloque de paréntesis (...)
-                for j in range(i + 3, len(processed_tokens)):
-                    if j >= len(processed_tokens): break
-                    
-                    lexeme = processed_tokens[j][1]
-                    if lexeme == '(':
-                        if paren_level == 0: start_paren = j
-                        paren_level += 1
-                    elif lexeme == ')':
-                        paren_level -= 1
-                        if paren_level == 0:
-                            end_paren = j
-                            break
-                
-                # Si se encuentra un bloque de paréntesis, clasificar los parámetros
-                if start_paren != -1 and end_paren != -1:
-                    for k in range(start_paren + 1, end_paren):
-                        if processed_tokens[k][0] == 'IDENTIFIER':
-                            param_lexeme = processed_tokens[k][1]
-                            if param_lexeme == 'self':
-                                processed_tokens[k] = ('SELF_PARAM', param_lexeme)
-                            else:
-                                processed_tokens[k] = ('PARAMETER', param_lexeme)
-
-    return processed_tokens
-
-def token_a_html(token):
-    """Convierte un token en su representación HTML"""
-    tipo, lexema = token
-    lexema_escapado = html.escape(lexema).replace('\n', '<br>')
+    """Re-clasifica identificadores basados en el contexto."""
+    processed_tokens = list(tokens)
     
-    if tipo == "WHITESPACE":
-        return lexema_escapado.replace(' ', '&nbsp;')
-    elif tipo == "NEWLINE":
-        return "<br>"
-    else:
-        return f'<span class="{tipo}">{lexema_escapado}</span>'
+    # Primera pasada: identificar funciones definidas en el código
+    defined_functions = set()
+    for i in range(len(processed_tokens)):
+        token_type, lexeme = processed_tokens[i]
+        if token_type == 'IDENTIFIER':
+            # Verificar si es una definición de función
+            prev_token_index = i - 1
+            while prev_token_index >= 0 and processed_tokens[prev_token_index][0] == 'WHITESPACE':
+                prev_token_index -= 1
+                
+            if prev_token_index >= 0 and processed_tokens[prev_token_index] == ('KEYWORD', 'def'):
+                defined_functions.add(lexeme)
+    
+    # Segunda pasada: procesar tokens
+    for i in range(len(processed_tokens)):
+        token_type, lexeme = processed_tokens[i]
+
+        if token_type == 'IDENTIFIER':
+            # Reclasificar funciones "built-in"
+            if lexeme in PYTHON_BUILTINS:
+                # Comprobar si es una llamada a función
+                next_token_index = i + 1
+                # Saltar espacios en blanco
+                while next_token_index < len(processed_tokens) and processed_tokens[next_token_index][0] == 'WHITESPACE':
+                    next_token_index += 1
+                
+                if next_token_index < len(processed_tokens) and processed_tokens[next_token_index][1] == '(':
+                    processed_tokens[i] = ('BUILTIN_FUNCTION', lexeme)
+                continue
+                
+            # Verificar si es una llamada a una función definida en el código
+            if lexeme in defined_functions:
+                next_token_index = i + 1
+                # Saltar espacios en blanco
+                while next_token_index < len(processed_tokens) and processed_tokens[next_token_index][0] == 'WHITESPACE':
+                    next_token_index += 1
+                
+                if next_token_index < len(processed_tokens) and processed_tokens[next_token_index][1] == '(':
+                    processed_tokens[i] = ('FUNCTION_CALL', lexeme)
+                continue
+
+            # Reclasificar nombres de clase y función
+            prev_token_index = i - 1
+            # Saltar espacios en blanco
+            while prev_token_index >= 0 and processed_tokens[prev_token_index][0] == 'WHITESPACE':
+                prev_token_index -= 1
+
+            if prev_token_index >= 0:
+                prev_token_type, prev_lexeme = processed_tokens[prev_token_index]
+                if prev_token_type == 'KEYWORD' and prev_lexeme in ['class', 'def']:
+                    new_type = 'CLASS_NAME' if prev_lexeme == 'class' else 'FUNCTION_NAME'
+                    processed_tokens[i] = (new_type, lexeme)
+
+    # Tercera pasada: identificar parámetros de funciones
+    i = 0
+    while i < len(processed_tokens):
+        token_type, lexeme = processed_tokens[i]
+        
+        if token_type == 'FUNCTION_NAME':
+            # Buscar paréntesis de apertura
+            paren_index = i + 1
+            while paren_index < len(processed_tokens) and processed_tokens[paren_index][1] != '(':
+                paren_index += 1
+                
+            if paren_index < len(processed_tokens):
+                # Encontrado el paréntesis, ahora buscar parámetros
+                param_index = paren_index + 1
+                paren_level = 1
+                
+                while param_index < len(processed_tokens) and paren_level > 0:
+                    param_type, param_lexeme = processed_tokens[param_index]
+                    
+                    if param_lexeme == '(':
+                        paren_level += 1
+                    elif param_lexeme == ')':
+                        paren_level -= 1
+                    elif param_type == 'IDENTIFIER' and paren_level == 1:
+                        # Es un parámetro de función
+                        if param_lexeme == 'self':
+                            processed_tokens[param_index] = ('SELF_PARAM', param_lexeme)
+                        else:
+                            processed_tokens[param_index] = ('PARAMETER', param_lexeme)
+                    
+                    param_index += 1
+        
+        i += 1
+    
+    return processed_tokens
 
 def generar_html(tokens, archivo_salida, titulo="Resaltado de Sintaxis Python", usar_css_externo=True):
     """Genera un archivo HTML con los tokens resaltados"""
+    # Aplicar post-procesamiento
+    tokens_procesados = post_process_tokens(tokens)
+    
     # Contar tokens por tipo
     conteo_tokens = {}
-    for tipo, _ in tokens:
+    for tipo, _ in tokens_procesados:
         conteo_tokens[tipo] = conteo_tokens.get(tipo, 0) + 1
     
     # Generar HTML
@@ -193,8 +248,14 @@ def generar_html(tokens, archivo_salida, titulo="Resaltado de Sintaxis Python", 
     html_content += "        <div class=\"code-container\">\n"
     html_content += "            <pre>"
     
-    # Agregar tokens
-    html_content += "".join(token_a_html(token) for token in tokens)
+    # Generar HTML para cada token
+    for tipo, lexema in tokens_procesados:
+        if tipo == "WHITESPACE":
+            html_content += html.escape(lexema).replace(' ', '&nbsp;')
+        elif tipo == "NEWLINE":
+            html_content += "<br>"
+        else:
+            html_content += f'<span class="{tipo}">{html.escape(lexema)}</span>'
     
     html_content += "</pre>\n"
     html_content += "        </div>\n"
@@ -203,7 +264,7 @@ def generar_html(tokens, archivo_salida, titulo="Resaltado de Sintaxis Python", 
     html_content += "            <h2>Estadísticas</h2>\n"
     html_content += "            <div class=\"stats-grid\">\n"
     html_content += f"                <div class=\"stat-item\">\n"
-    html_content += f"                    <strong>Total de tokens:</strong> {len(tokens)}\n"
+    html_content += f"                    <strong>Total de tokens:</strong> {len(tokens_procesados)}\n"
     html_content += f"                </div>\n"
     
     # Agregar estadísticas por tipo de token
@@ -232,28 +293,17 @@ def main():
     """Función principal"""
     # Verificar argumentos
     if len(sys.argv) < 2:
-        print(f"Uso: {sys.argv[0]} archivo_tokens.csv [archivo_salida.html]")
+        print("Uso: python generar_html.py <archivo_csv> [<archivo_html_salida>]")
         sys.exit(1)
     
     archivo_csv = sys.argv[1]
+    archivo_html = sys.argv[2] if len(sys.argv) > 2 else "resaltado_python.html"
     
-    if len(sys.argv) > 2:
-        archivo_salida = sys.argv[2]
-    else:
-        archivo_salida = "resaltado_python.html"
+    # Leer tokens
+    tokens = leer_tokens_csv(archivo_csv)
     
-    # Verificar que el archivo CSV existe
-    if not os.path.exists(archivo_csv):
-        print(f"Error: No se encontró el archivo {archivo_csv}")
-        sys.exit(1)
-    
-    # Leer tokens y generar HTML
-    raw_tokens = leer_tokens_csv(archivo_csv)
-    tokens = post_process_tokens(raw_tokens)
-    generar_html(tokens, archivo_salida)
-    
-    print(f"Se procesaron {len(tokens)} tokens")
-    print(f"Puedes abrir {archivo_salida} en tu navegador para ver el resultado")
+    # Generar HTML
+    generar_html(tokens, archivo_html)
 
 if __name__ == "__main__":
     main() 

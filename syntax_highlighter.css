@@ -1,17 +1,19 @@
-/* Estilos para el resaltador de sintaxis de Python */
+/* Estilos para el resaltador de sintaxis de Python - Tema One Dark Pro */
 
 body {
     font-family: 'Courier New', monospace;
-    background: #272822;
+    background: #282c34;
     padding: 20px;
     line-height: 1.6;
-    color: #f8f8f2;
+    color: #abb2bf;
 }
 
 h1 {
-    color: #f8f8f2;
+    color: #abb2bf;
     text-align: center;
     margin-bottom: 30px;
+    border-bottom: 1px solid #3b4048;
+    padding-bottom: 10px;
 }
 
 .container {
@@ -20,34 +22,37 @@ h1 {
 }
 
 .code-container {
-    background: #272822;
+    background: #282c34;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 1px solid #3b4048;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     overflow: auto;
 }
 
 pre {
     margin: 0;
     padding: 0;
-    background: #272822;
-    color: #f8f8f2;
+    background: transparent;
+    color: #abb2bf;
     white-space: pre-wrap;
     tab-size: 4;
 }
 
 .stats {
     margin-top: 30px;
-    background: #333;
+    background: #2c313a;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    color: #f8f8f2;
+    border: 1px solid #3b4048;
+    color: #abb2bf;
 }
 
 .stats h2 {
-    color: #f8f8f2;
+    color: #abb2bf;
     margin-top: 0;
+    border-bottom: 1px solid #3b4048;
+    padding-bottom: 10px;
 }
 
 .stats-grid {
@@ -57,7 +62,7 @@ pre {
 }
 
 .stat-item {
-    background: #3c3c3c;
+    background: #282c34;
     padding: 10px;
     border-radius: 5px;
 }
@@ -65,22 +70,35 @@ pre {
 .footer {
     margin-top: 30px;
     text-align: center;
-    color: #888;
+    color: #5c6370;
 }
 
-/* Estilos para tokens léxicos */
-.KEYWORD { color: #f92672; }
-.IDENTIFIER { color: #f8f8f2; }
-.NUMBER { color: #ae81ff; }
-.STRING, .STRING_TRIPLE, .STRING_F { color: #e6db74; }
-.COMMENT { color: #75715e; font-style: italic; }
-.OPERATOR { color: #f92672; }
-.DELIMITER { color: #f8f8f2; }
-.DECORATOR { color: #a1efe4; font-weight: bold; }
-.UNKNOWN { color: #fd971f; text-decoration: underline; }
+/* --- Estilos de Tokens (One Dark Pro) --- */
 
-/* Estilos para roles sintácticos (post-procesados) */
-.CLASS_NAME { color: #A6E22E; }
-.FUNCTION_NAME { color: #A6E22E; font-weight: bold; }
-.PARAMETER { color: #FD971F; font-style: italic; }
-.SELF_PARAM { color: #f92672; font-style: italic; }
+/* Roles Léxicos Básicos */
+.KEYWORD { color: #c678dd; }           /* Magenta */
+.IDENTIFIER { color: #abb2bf; }         /* Gris claro (texto normal) */
+.NUMBER { color: #d19a66; }             /* Naranja */
+
+/* Tipos de números */
+.NUMBER_INT { color: #d19a66; }         /* Naranja */
+.NUMBER_FLOAT { color: #d19a66; }       /* Naranja */
+.NUMBER_HEX { color: #d19a66; }         /* Naranja */
+.NUMBER_BIN { color: #d19a66; }         /* Naranja */
+.NUMBER_OCT { color: #d19a66; }         /* Naranja */
+.NUMBER_COMPLEX { color: #d19a66; }     /* Naranja */
+
+.STRING, .STRING_TRIPLE, .STRING_F { color: #98c379; } /* Verde */
+.COMMENT { color: #5c6370; font-style: italic; } /* Gris oscuro */
+.OPERATOR { color: #56b6c2; }           /* Cian */
+.DELIMITER { color: #abb2bf; }          /* Gris claro (como el texto) */
+.DECORATOR { color: #e5c07b; }          /* Amarillo/Dorado */
+.UNKNOWN { color: #e06c75; text-decoration: underline; } /* Rojo */
+
+/* Roles Sintácticos (Post-procesados) */
+.CLASS_NAME { color: #e5c07b; }         /* Amarillo/Dorado */
+.FUNCTION_NAME { color: #61afef; }      /* Azul */
+.FUNCTION_CALL { color: #61afef; }      /* Azul (mismo color que FUNCTION_NAME) */
+.BUILTIN_FUNCTION { color: #61afef; }   /* Azul */
+.PARAMETER { color: #f78c6c; font-weight: bold; } /* Naranja brillante, negrita para resaltar */
+.SELF_PARAM { color: #ff9580; font-style: italic; font-weight: bold; } /* Naranja-rosado, cursiva y negrita */

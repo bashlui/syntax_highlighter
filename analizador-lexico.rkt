@@ -3,63 +3,64 @@
 ;; Analizador léxico para Python implementado en Racket funcional puro
 ;; Este programa analiza un archivo de código Python y genera un archivo CSV con los tokens identificados
 
-;; Importar bibliotecas necesarias
 (require racket/string)
 (require racket/match)
 (require racket/port)
 
-;; Lista de palabras clave de Python
-(define python-keywords
-  '("and" "as" "assert" "async" "await" "break" "class" "continue" "def" "del"
-    "elif" "else" "except" "False" "finally" "for" "from" "global" "if" "import"
-    "in" "is" "lambda" "None" "nonlocal" "not" "or" "pass" "raise" "return"
-    "True" "try" "while" "with" "yield"))
+;; Función para leer el contenido de un archivo a una cadena
+(define (read-file-to-string file-path)
+  (with-input-from-file file-path
+    (lambda ()
+      (port->string (current-input-port)))))
 
-;; Crear la expresión regular para las palabras clave
-(define keyword-regex
-  (regexp (string-append "^\\b(" (string-join python-keywords "|") ")\\b")))
+;; Lista de palabras clave de Python para la re-clasificación
+(define python-keywords
+  (set "and" "as" "assert" "async" "await" "break" "class" "continue" "def" "del"
+       "elif" "else" "except" "False" "finally" "for" "from" "global" "if" "import"
+       "in" "is" "lambda" "None" "nonlocal" "not" "or" "pass" "raise" "return"
+       "True" "try" "while" "with" "yield"))
 
 ;; Definición de categorías léxicas con sus expresiones regulares
-;; El orden es importante: de más específico a más general
 (define token-patterns
   `(
-    ;; Comentarios (solo hasta el final de la línea)
-    ("COMMENT" . ,(regexp "^#[^\n]*"))
+    ;; Comentarios
+    ("COMMENT" . ,(pregexp "#.*"))
     
-    ;; Cadenas triples (tienen prioridad sobre las cadenas simples)
-    ("STRING_TRIPLE" . ,(regexp "^(\"\"\"[\\s\\S]*?\"\"\"|'''[\\s\\S]*?''')"))
+    ;; Cadenas
+    ("STRING_TRIPLE" . ,(pregexp "(?s:\"\"\".*?\"\"\"|'''.*?''')"))
+    ("STRING_F" . ,(pregexp "[fF](['\"].*?['\"])"))
+    ("STRING" . ,(pregexp "(['\"].*?['\"])"))
     
-    ;; F-strings (manejan caracteres escapados)
-    ("STRING_F" . ,(regexp "^[fF]('(\\\\.|[^'\\\\])*'|\"(\\\\.|[^\"\\\\])*\")"))
-    
-    ;; Cadenas simples y dobles (manejan caracteres escapados)
-    ("STRING" . ,(regexp "^('(\\\\.|[^'\\\\])*'|\"(\\\\.|[^\"\\\\])*\")"))
-    
-    ;; Palabras reservadas de Python (tienen prioridad sobre identificadores)
-    ("KEYWORD" . ,keyword-regex)
-    
-    ;; Números (enteros, flotantes, hexadecimales, binarios, octales, notación científica)
-    ("NUMBER" . ,(regexp "^\\b(0[xX][0-9a-fA-F]+|0[bB][01]+|0[oO][0-7]+|\\d+\\.\\d*|\\.\\d+|\\d+)([eE][+-]?\\d+)?\\b"))
-    
-    ;; Decoradores
-    ("DECORATOR" . ,(regexp "^@[a-zA-Z_][a-zA-Z0-9_]*"))
+    ;; Números
+    ("NUMBER_FLOAT" . ,(pregexp "\\d+\\.\\d*([eE][+-]?\\d+)?"))
+    ("NUMBER_FLOAT" . ,(pregexp "\\.\\d+([eE][+-]?\\d+)?"))
+    ("NUMBER_HEX" . ,(pregexp "0[xX][0-9a-fA-F]+"))
+    ("NUMBER_BIN" . ,(pregexp "0[bB][01]+"))
+    ("NUMBER_OCT" . ,(pregexp "0[oO][0-7]+"))
+    ("NUMBER_INT" . ,(pregexp "\\d+"))
     
     ;; Operadores
-    ("OPERATOR" . ,(regexp "^(\\*\\*=|//=|\\+=|-=|\\*=|/=|%=|&=|\\|=|\\^=|>>=|<<=|\\*\\*|//|==|!=|<=|>=|<>|<<|>>|\\+|-|\\*|/|%|\\^|&|\\||~|<|>|=)"))
+    ("OPERATOR" . ,(pregexp "\\*\\*=|//=|\\+=|-=|\\*=|/=|%=|&=|\\|=|\\^=|>>=|<<=|\\*\\*|//|==|!=|<=|>=|<>|<<|>>|\\+|-|\\*|/|%|\\^|&|\\||~|<|>|=|@"))
     
     ;; Delimitadores
-    ("DELIMITER" . ,(regexp "^[()\\[\\]{},.:;@]"))
+    ("DELIMITER" . ,(pregexp "[][(){},:;.@?]"))
     
-    ;; Identificadores (nombres de variables, funciones, etc.)
-    ("IDENTIFIER" . ,(regexp "^[a-zA-Z_][a-zA-Z0-9_]*"))
+    ;; Decoradores
+    ("DECORATOR" . ,(pregexp "@[a-zA-Z_][a-zA-Z0-9_]*"))
     
-    ;; Espacios en blanco (espacios, tabulaciones)
-    ("WHITESPACE" . ,(regexp "^[ \t]+"))
+    ;; Identificadores
+    ("IDENTIFIER" . ,(pregexp "[a-zA-Z_][a-zA-Z0-9_]*"))
     
-    ;; Saltos de línea
-    ("NEWLINE" . ,(regexp "^\n"))))
+    ;; Espacios
+    ("WHITESPACE" . ,(pregexp "[ \t]+"))
+    ("NEWLINE" . ,(pregexp "\n"))
+    ))
 
-;; Función para encontrar el token que coincide con el inicio del texto
+;; Función auxiliar para contar caracteres
+(define (count-char str char)
+  (length (regexp-match* (regexp (string #\\ char)) str)))
+
+;; Función para encontrar tokens
 (define (find-first-match text)
   (define (find-match patterns)
     (if (null? patterns)
@@ -67,50 +68,77 @@
         (let* ([pattern-pair (car patterns)]
                [category (car pattern-pair)]
                [regex (cdr pattern-pair)]
-               [match (regexp-match regex text)])
+               [match (regexp-match-positions regex text)])
           (if match
-              (cons category (car match))
+              (let ([start (caar match)]
+                    [end (cdar match)])
+                (if (zero? start)
+                    (cons category (substring text start end))
+                    (find-match (cdr patterns))))
               (find-match (cdr patterns))))))
   (find-match token-patterns))
 
-;; Función para tokenizar una cadena de texto
+;; Función principal de tokenización
 (define (tokenize-string text)
   (let loop ([remaining-text text]
-             [tokens '()])
+             [tokens '()]
+             [line 1]
+             [col 1])
     (cond
       [(string=? remaining-text "") (reverse tokens)]
       [else
        (let ([match (find-first-match remaining-text)])
          (if match
-             (let ([category (car match)]
-                   [lexeme (cdr match)]
-                   [new-text (substring remaining-text (string-length (cdr match)))])
-               (loop new-text (cons (list category lexeme) tokens)))
-             ;; Si no hay coincidencia, considerar el carácter como desconocido
-             (let ([unknown-char (substring remaining-text 0 1)]
-                   [new-text (substring remaining-text 1)])
-               (loop new-text (cons (list "UNKNOWN" unknown-char) tokens)))))])))
+             (let* ([category (car match)]
+                    [lexeme (cdr match)]
+                    [lexeme-length (string-length lexeme)]
+                    [new-text (substring remaining-text lexeme-length)]
+                    [final-category (cond
+                                     [(and (string=? category "IDENTIFIER")
+                                           (set-member? python-keywords (string-downcase lexeme)))
+                                      "KEYWORD"]
+                                     [(and (string=? category "NUMBER_INT")
+                                           (regexp-match? #rx"[jJ]$" lexeme))
+                                      "NUMBER_COMPLEX"]
+                                     [else category])]
+                    [new-lines (count-char lexeme #\n)]
+                    [new-line (if (> new-lines 0) (+ line new-lines) line)]
+                    [new-col (if (> new-lines 0)
+                                 (+ 1 (string-length (last (string-split lexeme "\n"))))
+                                 (+ col lexeme-length))])
+               (loop new-text 
+                     (cons (list final-category lexeme line col) tokens)
+                     new-line
+                     new-col))
+             (let ([unknown-char (substring remaining-text 0 1)])
+               (loop (substring remaining-text 1)
+                     (cons (list "UNKNOWN" unknown-char line col) tokens)
+                     line
+                     (+ col 1)))))])))
 
-;; Función para leer un archivo y devolver su contenido como una cadena
-(define (read-file-to-string file-path)
-  (with-input-from-file file-path
-    (lambda ()
-      (port->string (current-input-port)))))
-
-;; Función para escapar comillas dobles en una cadena para CSV
+;; Función para escapar strings en CSV
 (define (escape-csv-string str)
-  (string-replace (string-replace str "\"" "\"\"") "\n" "\\n"))
+  (if (regexp-match? #rx"[\",\n]" str)
+      (string-append "\"" (string-replace str "\"" "\"\"") "\"")
+      str))
 
-;; Función para escribir tokens en un archivo CSV
+;; Función para escribir tokens a CSV - Formato simple para mejor compatibilidad
 (define (write-tokens-to-csv tokens output-file)
   (with-output-to-file output-file
     #:exists 'replace
     (lambda ()
+      ;; Usar un formato simple con solo tipo y lexema
+      (displayln "tipo,lexema")
       (for-each
        (lambda (token)
          (let ([category (first token)]
                [lexeme (second token)])
-           (printf "\"~a\",\"~a\"\n" category (escape-csv-string lexeme))))
+           ;; Filtrar tokens problemáticos
+           (unless (and (string=? category "UNKNOWN") 
+                        (or (string=? lexeme "") (string=? lexeme "\n") (string=? lexeme "\r\n")))
+             (printf "~a,~a\n" 
+                     (escape-csv-string category)
+                     (escape-csv-string lexeme)))))
        tokens))))
 
 ;; Función principal
@@ -130,5 +158,5 @@
     (printf "Análisis completado. Se encontraron ~a tokens.\n" (length tokens))
     (printf "Resultados guardados en: ~a\n" output-file)))
 
-;; Ejecutar la función principal
+;; Ejecutar el programa
 (main)

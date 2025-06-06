@@ -1,72 +1,170 @@
-"IDENTIFIER","import"
-"WHITESPACE"," "
-"IDENTIFIER","os"
-"UNKNOWN",""
-"NEWLINE","\n"
-"COMMENT","# Comentario en hashtag"
-"NEWLINE","\n"
-"STRING",""""""
-"STRING","""A string"""
-"STRING",""""""
-"UNKNOWN",""
-"NEWLINE","\n"
-"UNKNOWN",""
-"NEWLINE","\n"
-"IDENTIFIER","class"
-"WHITESPACE"," "
-"IDENTIFIER","Foo"
-"UNKNOWN","("
-"IDENTIFIER","object"
-"UNKNOWN",")"
-"UNKNOWN",":"
-"UNKNOWN",""
-"NEWLINE","\n"
-"WHITESPACE","    "
-"IDENTIFIER","def"
-"WHITESPACE"," "
-"IDENTIFIER","_init_"
-"UNKNOWN","("
-"IDENTIFIER","self"
-"UNKNOWN",")"
-"UNKNOWN",":"
-"UNKNOWN",""
-"NEWLINE","\n"
-"WHITESPACE","        "
-"IDENTIFIER","num"
-"WHITESPACE"," "
-"OPERATOR","="
-"WHITESPACE"," "
-"UNKNOWN","4"
-"UNKNOWN","2"
-"UNKNOWN",""
-"NEWLINE","\n"
-"WHITESPACE","        "
-"IDENTIFIER","print"
-"UNKNOWN","("
-"IDENTIFIER","num"
-"UNKNOWN",")"
-"UNKNOWN",""
-"NEWLINE","\n"
-"UNKNOWN",""
-"NEWLINE","\n"
-"WHITESPACE","    "
-"DECORATOR","@property"
-"UNKNOWN",""
-"NEWLINE","\n"
-"WHITESPACE","    "
-"IDENTIFIER","def"
-"WHITESPACE"," "
-"IDENTIFIER","foo"
-"UNKNOWN","("
-"IDENTIFIER","self"
-"UNKNOWN",")"
-"UNKNOWN",":"
-"UNKNOWN",""
-"NEWLINE","\n"
-"WHITESPACE","        "
-"IDENTIFIER","return"
-"WHITESPACE"," "
-"STRING","'bar'"
-"UNKNOWN",""
-"NEWLINE","\n"
-"WHITESPACE","    "
+tipo,lexema
+KEYWORD,def
+WHITESPACE, 
+IDENTIFIER,fibonacci
+DELIMITER,(
+IDENTIFIER,n
+DELIMITER,)
+DELIMITER,:
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,    
+STRING_TRIPLE,"""""""
+    Genera los primeros n números de la serie de Fibonacci.
+    
+    Args:
+        n: Cantidad de números de la serie a generar
+        
+    Returns:
+        Una lista con los primeros n números de la serie
+    """""""
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,    
+KEYWORD,if
+WHITESPACE, 
+IDENTIFIER,n
+WHITESPACE, 
+OPERATOR,<=
+WHITESPACE, 
+NUMBER_INT,0
+DELIMITER,:
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,        
+KEYWORD,return
+WHITESPACE, 
+DELIMITER,[
+DELIMITER,]
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,    
+KEYWORD,elif
+WHITESPACE, 
+IDENTIFIER,n
+WHITESPACE, 
+OPERATOR,==
+WHITESPACE, 
+NUMBER_INT,1
+DELIMITER,:
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,        
+KEYWORD,return
+WHITESPACE, 
+DELIMITER,[
+NUMBER_INT,0
+DELIMITER,]
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,    
+KEYWORD,elif
+WHITESPACE, 
+IDENTIFIER,n
+WHITESPACE, 
+OPERATOR,==
+WHITESPACE, 
+NUMBER_INT,2
+DELIMITER,:
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,        
+KEYWORD,return
+WHITESPACE, 
+DELIMITER,[
+NUMBER_INT,0
+DELIMITER,","
+WHITESPACE, 
+NUMBER_INT,1
+DELIMITER,]
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,    
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,    
+IDENTIFIER,fib
+WHITESPACE, 
+OPERATOR,=
+WHITESPACE, 
+DELIMITER,[
+NUMBER_INT,0
+DELIMITER,","
+WHITESPACE, 
+NUMBER_INT,1
+DELIMITER,]
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,    
+KEYWORD,for
+WHITESPACE, 
+IDENTIFIER,i
+WHITESPACE, 
+KEYWORD,in
+WHITESPACE, 
+IDENTIFIER,range
+DELIMITER,(
+NUMBER_INT,2
+DELIMITER,","
+WHITESPACE, 
+IDENTIFIER,n
+DELIMITER,)
+DELIMITER,:
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,        
+IDENTIFIER,fib
+DELIMITER,.
+IDENTIFIER,append
+DELIMITER,(
+IDENTIFIER,fib
+DELIMITER,[
+IDENTIFIER,i
+OPERATOR,-
+NUMBER_INT,1
+DELIMITER,]
+WHITESPACE, 
+OPERATOR,+
+WHITESPACE, 
+IDENTIFIER,fib
+DELIMITER,[
+IDENTIFIER,i
+OPERATOR,-
+NUMBER_INT,2
+DELIMITER,]
+DELIMITER,)
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,    
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,    
+KEYWORD,return
+WHITESPACE, 
+IDENTIFIER,fib
+UNKNOWN,
+NEWLINE,"
+"
+UNKNOWN,
+NEWLINE,"
+"
+COMMENT,"# Ejemplo de uso
+if __name__ == ""__main__"":
+    n = 10
+    resultado = fibonacci(n)
+    print(f""Los primeros {n} números de la serie de Fibonacci son:"")
+    print(resultado)
+"
