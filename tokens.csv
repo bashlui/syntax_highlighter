@@ -161,10 +161,51 @@ NEWLINE,"
 UNKNOWN,
 NEWLINE,"
 "
-COMMENT,"# Ejemplo de uso
-if __name__ == ""__main__"":
-    n = 10
-    resultado = fibonacci(n)
-    print(f""Los primeros {n} números de la serie de Fibonacci son:"")
-    print(resultado)
+KEYWORD,if
+WHITESPACE, 
+IDENTIFIER,__name__
+WHITESPACE, 
+OPERATOR,==
+WHITESPACE, 
+STRING,"""__main__"""
+DELIMITER,:
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,    
+IDENTIFIER,n
+WHITESPACE, 
+OPERATOR,=
+WHITESPACE, 
+NUMBER_INT,10
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,    
+IDENTIFIER,resultado
+WHITESPACE, 
+OPERATOR,=
+WHITESPACE, 
+IDENTIFIER,fibonacci
+DELIMITER,(
+IDENTIFIER,n
+DELIMITER,)
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,    
+IDENTIFIER,print
+DELIMITER,(
+STRING_F,"f""Los primeros {n} números de la serie de Fibonacci son:"""
+DELIMITER,)
+UNKNOWN,
+NEWLINE,"
+"
+WHITESPACE,    
+IDENTIFIER,print
+DELIMITER,(
+IDENTIFIER,resultado
+DELIMITER,)
+UNKNOWN,
+NEWLINE,"
 "

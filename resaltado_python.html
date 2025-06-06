@@ -19,38 +19,33 @@
         
     Returns:
         Una lista con los primeros n números de la serie
-    &quot;&quot;&quot;</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">if</span>&nbsp;<span class="IDENTIFIER">n</span>&nbsp;<span class="OPERATOR">&lt;=</span>&nbsp;<span class="NUMBER_INT">0</span><span class="DELIMITER">:</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">return</span>&nbsp;<span class="DELIMITER">[</span><span class="DELIMITER">]</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">elif</span>&nbsp;<span class="IDENTIFIER">n</span>&nbsp;<span class="OPERATOR">==</span>&nbsp;<span class="NUMBER_INT">1</span><span class="DELIMITER">:</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">return</span>&nbsp;<span class="DELIMITER">[</span><span class="NUMBER_INT">0</span><span class="DELIMITER">]</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">elif</span>&nbsp;<span class="IDENTIFIER">n</span>&nbsp;<span class="OPERATOR">==</span>&nbsp;<span class="NUMBER_INT">2</span><span class="DELIMITER">:</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">return</span>&nbsp;<span class="DELIMITER">[</span><span class="NUMBER_INT">0</span><span class="DELIMITER">,</span>&nbsp;<span class="NUMBER_INT">1</span><span class="DELIMITER">]</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IDENTIFIER">fib</span>&nbsp;<span class="OPERATOR">=</span>&nbsp;<span class="DELIMITER">[</span><span class="NUMBER_INT">0</span><span class="DELIMITER">,</span>&nbsp;<span class="NUMBER_INT">1</span><span class="DELIMITER">]</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">for</span>&nbsp;<span class="IDENTIFIER">i</span>&nbsp;<span class="KEYWORD">in</span>&nbsp;<span class="BUILTIN_FUNCTION">range</span><span class="DELIMITER">(</span><span class="NUMBER_INT">2</span><span class="DELIMITER">,</span>&nbsp;<span class="IDENTIFIER">n</span><span class="DELIMITER">)</span><span class="DELIMITER">:</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IDENTIFIER">fib</span><span class="DELIMITER">.</span><span class="IDENTIFIER">append</span><span class="DELIMITER">(</span><span class="IDENTIFIER">fib</span><span class="DELIMITER">[</span><span class="IDENTIFIER">i</span><span class="OPERATOR">-</span><span class="NUMBER_INT">1</span><span class="DELIMITER">]</span>&nbsp;<span class="OPERATOR">+</span>&nbsp;<span class="IDENTIFIER">fib</span><span class="DELIMITER">[</span><span class="IDENTIFIER">i</span><span class="OPERATOR">-</span><span class="NUMBER_INT">2</span><span class="DELIMITER">]</span><span class="DELIMITER">)</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">return</span>&nbsp;<span class="IDENTIFIER">fib</span><span class="UNKNOWN"></span><br><span class="UNKNOWN"></span><br><span class="COMMENT"># Ejemplo de uso
-if __name__ == &quot;__main__&quot;:
-    n = 10
-    resultado = fibonacci(n)
-    print(f&quot;Los primeros {n} números de la serie de Fibonacci son:&quot;)
-    print(resultado)
-</span></pre>
+    &quot;&quot;&quot;</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">if</span>&nbsp;<span class="IDENTIFIER">n</span>&nbsp;<span class="OPERATOR">&lt;=</span>&nbsp;<span class="NUMBER_INT">0</span><span class="DELIMITER">:</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">return</span>&nbsp;<span class="DELIMITER">[</span><span class="DELIMITER">]</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">elif</span>&nbsp;<span class="IDENTIFIER">n</span>&nbsp;<span class="OPERATOR">==</span>&nbsp;<span class="NUMBER_INT">1</span><span class="DELIMITER">:</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">return</span>&nbsp;<span class="DELIMITER">[</span><span class="NUMBER_INT">0</span><span class="DELIMITER">]</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">elif</span>&nbsp;<span class="IDENTIFIER">n</span>&nbsp;<span class="OPERATOR">==</span>&nbsp;<span class="NUMBER_INT">2</span><span class="DELIMITER">:</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">return</span>&nbsp;<span class="DELIMITER">[</span><span class="NUMBER_INT">0</span><span class="DELIMITER">,</span>&nbsp;<span class="NUMBER_INT">1</span><span class="DELIMITER">]</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IDENTIFIER">fib</span>&nbsp;<span class="OPERATOR">=</span>&nbsp;<span class="DELIMITER">[</span><span class="NUMBER_INT">0</span><span class="DELIMITER">,</span>&nbsp;<span class="NUMBER_INT">1</span><span class="DELIMITER">]</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">for</span>&nbsp;<span class="IDENTIFIER">i</span>&nbsp;<span class="KEYWORD">in</span>&nbsp;<span class="BUILTIN_FUNCTION">range</span><span class="DELIMITER">(</span><span class="NUMBER_INT">2</span><span class="DELIMITER">,</span>&nbsp;<span class="IDENTIFIER">n</span><span class="DELIMITER">)</span><span class="DELIMITER">:</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IDENTIFIER">fib</span><span class="DELIMITER">.</span><span class="IDENTIFIER">append</span><span class="DELIMITER">(</span><span class="IDENTIFIER">fib</span><span class="DELIMITER">[</span><span class="IDENTIFIER">i</span><span class="OPERATOR">-</span><span class="NUMBER_INT">1</span><span class="DELIMITER">]</span>&nbsp;<span class="OPERATOR">+</span>&nbsp;<span class="IDENTIFIER">fib</span><span class="DELIMITER">[</span><span class="IDENTIFIER">i</span><span class="OPERATOR">-</span><span class="NUMBER_INT">2</span><span class="DELIMITER">]</span><span class="DELIMITER">)</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="KEYWORD">return</span>&nbsp;<span class="IDENTIFIER">fib</span><span class="UNKNOWN"></span><br><span class="UNKNOWN"></span><br><span class="KEYWORD">if</span>&nbsp;<span class="IDENTIFIER">__name__</span>&nbsp;<span class="OPERATOR">==</span>&nbsp;<span class="STRING">&quot;__main__&quot;</span><span class="DELIMITER">:</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IDENTIFIER">n</span>&nbsp;<span class="OPERATOR">=</span>&nbsp;<span class="NUMBER_INT">10</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IDENTIFIER">resultado</span>&nbsp;<span class="OPERATOR">=</span>&nbsp;<span class="FUNCTION_CALL">fibonacci</span><span class="DELIMITER">(</span><span class="IDENTIFIER">n</span><span class="DELIMITER">)</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="BUILTIN_FUNCTION">print</span><span class="DELIMITER">(</span><span class="STRING_F">f&quot;Los primeros {n} números de la serie de Fibonacci son:&quot;</span><span class="DELIMITER">)</span><span class="UNKNOWN"></span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="BUILTIN_FUNCTION">print</span><span class="DELIMITER">(</span><span class="IDENTIFIER">resultado</span><span class="DELIMITER">)</span><span class="UNKNOWN"></span><br></pre>
         </div>
         
         <div class="stats">
             <h2>Estadísticas</h2>
             <div class="stats-grid">
                 <div class="stat-item">
-                    <strong>Total de tokens:</strong> 140
+                    <strong>Total de tokens:</strong> 182
                 </div>
-                <div class="stat-item"><strong>BUILTIN_FUNCTION:</strong> 1</div>
-                <div class="stat-item"><strong>COMMENT:</strong> 1</div>
-                <div class="stat-item"><strong>DELIMITER:</strong> 27</div>
-                <div class="stat-item"><strong>FUNCTION_CALL:</strong> 1</div>
-                <div class="stat-item"><strong>IDENTIFIER:</strong> 14</div>
-                <div class="stat-item"><strong>KEYWORD:</strong> 10</div>
-                <div class="stat-item"><strong>NEWLINE:</strong> 15</div>
-                <div class="stat-item"><strong>NUMBER_INT:</strong> 11</div>
-                <div class="stat-item"><strong>OPERATOR:</strong> 7</div>
+                <div class="stat-item"><strong>BUILTIN_FUNCTION:</strong> 3</div>
+                <div class="stat-item"><strong>DELIMITER:</strong> 34</div>
+                <div class="stat-item"><strong>FUNCTION_CALL:</strong> 2</div>
+                <div class="stat-item"><strong>IDENTIFIER:</strong> 19</div>
+                <div class="stat-item"><strong>KEYWORD:</strong> 11</div>
+                <div class="stat-item"><strong>NEWLINE:</strong> 20</div>
+                <div class="stat-item"><strong>NUMBER_INT:</strong> 12</div>
+                <div class="stat-item"><strong>OPERATOR:</strong> 10</div>
+                <div class="stat-item"><strong>STRING:</strong> 1</div>
+                <div class="stat-item"><strong>STRING_F:</strong> 1</div>
                 <div class="stat-item"><strong>STRING_TRIPLE:</strong> 1</div>
-                <div class="stat-item"><strong>UNKNOWN:</strong> 15</div>
-                <div class="stat-item"><strong>WHITESPACE:</strong> 37</div>
+                <div class="stat-item"><strong>UNKNOWN:</strong> 20</div>
+                <div class="stat-item"><strong>WHITESPACE:</strong> 48</div>
             </div>
         </div>
         
         <div class="footer">
-            <p>Generado el 2025-06-05 18:03:40</p>
+            <p>Generado el 2025-06-05 18:30:05</p>
         </div>
     </div>
 </body>

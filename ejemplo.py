@@ -21,7 +21,6 @@ def fibonacci(n):
     
     return fib
 
-# Ejemplo de uso
 if __name__ == "__main__":
     n = 10
     resultado = fibonacci(n)
